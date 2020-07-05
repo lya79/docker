@@ -1,0 +1,49 @@
+version: "2"
+services:
+
+    local-external:
+        build: .
+        ports:
+            - "8083:8080"
+        environment: 
+            - ENV=external
+        networks:
+            - internal_network
+
+    local-internal:
+        build: .
+        ports:
+            - "8084:8080"
+        environment: 
+            - ENV=internal
+        networks:
+            - internal_network
+            - db_network
+
+    adminer:
+        image: adminer
+        # restart: always
+        ports:
+            - 8080:8080
+        networks:
+            - db_network
+
+    db:
+        image: mysql:5.6
+        # restart: always
+        volumes:
+            - db:/var/lib/mysql
+        environment:
+            MYSQL_USER: root
+            MYSQL_ROOT_PASSWORD: qwe123
+            MYSQL_DATABASE: hello
+        networks:
+            - db_network
+
+
+networks:
+    internal_network:
+    db_network:
+
+volumes:
+    db:
